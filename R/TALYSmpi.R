@@ -1,15 +1,16 @@
 #' Setup Cluster for TALYS
 #'
-#' Setup a computing cluster for TALYS calculations
+#' Setup a computing cluster for TALYS calculations.
+#' @param runOpts list of run options
+#' @param maxNumCPU (optional) the maximum number of CPUs to use
+#' @export
 #'
-#'
-#' @return
-#' list with functions to perform TALYS calculations
-#' @export 
+#' @import data.table
 #' @import Rmpi
 #' @import digest
 #' @import TALYSeval
-#' @import data.table
+#' @useDynLib talysR
+
 initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0) {
 
 	cat("nworkers = ",maxNumCPU,"\n")
