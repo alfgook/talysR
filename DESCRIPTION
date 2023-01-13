@@ -1,0 +1,13 @@
+Package: talysR
+Title: An interface to run parallel talys model calculations via an R interface
+Version: 0.0.0.9000
+Authors@R: 
+    person("Alf", "Göök", , "alf.gook@physics.uu.se", role = c("aut", "cre"))
+Author: Alf Göök [aut, cre]
+Maintainer: Alf Göök <alf.gook@physics.uu.se>
+Description: This packages allows you to run the nuclear reaction model talys inside R. Furthermore, using Rmpi and depending on the package TALYSeval (by G. Schnabel) talysR provides an interface to run talys in parallel via MPI, parse the output and return it to the calling process in data.table format.
+License: use_gpl3_license()
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: Rmpi, TALYSeval, digest, data.table
