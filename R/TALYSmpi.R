@@ -25,7 +25,7 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 
 	close <- function(env) {
 		mpi.close.Rslaves(dellog = FALSE)
-		mpi.exit()
+		mpi.finalize()
 	}
 	ee <- environment()
 	reg.finalizer(ee, close, onexit = TRUE)
