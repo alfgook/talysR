@@ -3,6 +3,8 @@
 #' Setup a computing cluster for TALYS calculations.
 #' @param runOpts list of run options
 #' @param maxNumCPU (optional) the maximum number of CPUs to use
+#' @param needlog (optional) passed on to Rmpi::mpi.spawn.Rslaves. If TRUE, R BATCH outputs will be saved in log files.  If FALSE, the outputs will send to /dev/null.If TRUE, do not print anything unless an error occurs
+#' @param quiet (optional) passed on to Rmpi::mpi.spawn.Rslaves. If TRUE, do not print anything unless an error occurs
 #' @export
 #'
 #' @import data.table
@@ -11,19 +13,19 @@
 #' @import TALYSeval
 #' @useDynLib talysR
 
-initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0) {
+initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 
 	if(!maxNumCPU) maxNumCPU <- mpi.universe.size() - 1
 
 	#mpi.spawn.Rslaves(nslaves=maxNumCPU) # This is to get log files for debugging
-	mpi.spawn.Rslaves(nslaves=maxNumCPU,quiet=TRUE,needlog=FALSE)
+	mpi.spawn.Rslaves(nslaves=maxNumCPU,quiet=quiet,needlog=needlog)
 
 	defaults <- list(runOpts=runOpts)
 	theResults <- NA
 
 	close <- function(env) {
 		mpi.close.Rslaves(dellog = FALSE)
-		#mpi.exit()
+		mpi.exit()
 	}
 	ee <- environment()
 	reg.finalizer(ee, close, onexit = TRUE)
