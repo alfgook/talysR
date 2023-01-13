@@ -13,24 +13,17 @@
 
 initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0) {
 
-	cat("nworkers = ",maxNumCPU,"\n")
 	if(!maxNumCPU) maxNumCPU <- mpi.universe.size() - 1
-	cat("nworkers = ",maxNumCPU,"\n")
+
 	#mpi.spawn.Rslaves(nslaves=maxNumCPU) # This is to get log files for debugging
 	mpi.spawn.Rslaves(nslaves=maxNumCPU,quiet=TRUE,needlog=FALSE)
-
-	#mpi.bcast.cmd(dyn.load("talys-lib.so"))
-	#mpi.bcast.cmd(library(digest))
-	#mpi.bcast.cmd(library(TALYSeval))
-	#mpi.bcast.cmd(library(data.table))
 
 	defaults <- list(runOpts=runOpts)
 	theResults <- NA
 
 	close <- function(env) {
-		#mpi.exit()
 		mpi.close.Rslaves(dellog = FALSE)
-		mpi.exit()
+		#mpi.exit()
 	}
 	ee <- environment()
 	reg.finalizer(ee, close, onexit = TRUE)
@@ -40,10 +33,6 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0) {
 		# this function is used internally only
 		# this will do the actual running of talys
 		# one single job
-
-		#library(digest)
-	    #library(TALYSeval)
-	    #library(data.table)
 
 	    if (is.null(runOpts)) runOpts <- defaults$runOpts
 
