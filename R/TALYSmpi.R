@@ -5,7 +5,7 @@
 #'
 #' @return
 #' list with functions to perform TALYS calculations
-#' @export
+#' @export initTALYSmpi
 #'
 #' @import Rmpi
 #' @import digest
