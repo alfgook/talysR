@@ -5,17 +5,11 @@
 #'
 #' @return
 #' list with functions to perform TALYS calculations
-#' @export initTALYSmpi
-#'
+#' @export 
 #' @import Rmpi
 #' @import digest
 #' @import TALYSeval
 #' @import data.table
-#' @useDynLib talysR
-
-#library(Rmpi)
-#dyn.load("talys-lib.so")
-
 initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0) {
 
 	cat("nworkers = ",maxNumCPU,"\n")
