@@ -15,6 +15,18 @@
 
 initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 
+	talys_home_path <- Sys.getenv("TALYSHOME")
+	if(nchar(talys_home_path) == 0) {
+		print("environment variable TALYSHOME not set")
+		return(list(error="environment variable TALYSHOME not set"))
+	}
+
+	if(!("structure" %in% list.files(talys_home_path))) {
+		err <- paste0("structure files not found in: ",talys_home_path)
+		print(err)
+		return(list(error=err))
+	}
+
 	if(!maxNumCPU) maxNumCPU <- mpi.universe.size() - 1
 
 	#mpi.spawn.Rslaves(nslaves=maxNumCPU) # This is to get log files for debugging
