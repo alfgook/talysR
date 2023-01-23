@@ -115,7 +115,7 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 		if (is.data.table(outSpec)) {
 			# all calculations have the same output specification (outSpec)
 			
-			# create a list with input and uotput specification for each job
+			# create a list with input and output specification for each job
 			input <- lapply(seq_along(inpSpecList),function(i)
 				list(input=inpSpecList[[i]], outspec=outSpec,saveDir=saveDir, calcIdx=i, calcDir="")
 				)
@@ -128,7 +128,7 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 				# just run it on the main thread
 				cat("single workers\n")
 				#resultList <- mpi.parLapply(input,runTALYS)
-				resultList <- runTALYS(input)
+				resultList <- lapply(input,runTALYS)
 			}
 			
 			theResults <<- resultList
@@ -148,7 +148,7 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 				# just run it on the main thread
 				cat("single workers\n")
 				#resultList <- mpi.parLapply(input,runTALYS)
-				resultList <- runTALYS(input)
+				resultList <- lapply(input,runTALYS)
 			}
 
 			theResults <<- resultList
