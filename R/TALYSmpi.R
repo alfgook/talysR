@@ -120,7 +120,12 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 				list(input=inpSpecList[[i]], outspec=outSpec,saveDir=saveDir, calcIdx=i, calcDir="")
 				)
 
-			resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
+			if(length(input)>1) {
+				resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
+			} else {
+				resultList <- mpi.parLapply(input,runTALYS)
+			}
+			
 			theResults <<- resultList
 			
 		} else if (is.list(outSpec)) {
@@ -130,7 +135,12 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 				list(input=x, outspec=y, saveDir = saveDir, calcIdx=i, calcDir="")
 			}, i=seq_along(inpSpecList), x=inpSpecList, y=outSpec, SIMPLIFY = FALSE)
 
-			resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
+			if(length(input)>1) {
+				resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
+			} else {
+				resultList <- mpi.parLapply(input,runTALYS)
+			}
+			
 			theResults <<- resultList
 		} else {
 			stop("outSpec is neither a data.table nor a list of data.tables.")
