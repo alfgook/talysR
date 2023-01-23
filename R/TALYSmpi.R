@@ -127,6 +127,7 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 			} else {
 				# just run it on the main thread
 				cat("single workers\n")
+				#resultList <- mpi.parLapply(input,runTALYS)
 				resultList <- runTALYS(input)
 			}
 			
@@ -146,6 +147,7 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 			} else {
 				# just run it on the main thread
 				cat("single workers\n")
+				#resultList <- mpi.parLapply(input,runTALYS)
 				resultList <- runTALYS(input)
 			}
 
