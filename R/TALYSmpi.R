@@ -120,10 +120,14 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 				list(input=inpSpecList[[i]], outspec=outSpec,saveDir=saveDir, calcIdx=i, calcDir="")
 				)
 
+			cat("length(input) = ", length(input), "\n")
 			if(length(input)>1) {
+				cat("many workers\n")
 				resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
 			} else {
-				resultList <- mpi.parLapply(input,runTALYS)
+				# just run it on the main thread
+				cat("single workers\n")
+				resultList <- runTALYS(input)
 			}
 			
 			theResults <<- resultList
@@ -135,12 +139,16 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 				list(input=x, outspec=y, saveDir = saveDir, calcIdx=i, calcDir="")
 			}, i=seq_along(inpSpecList), x=inpSpecList, y=outSpec, SIMPLIFY = FALSE)
 
+			cat("length(input) = ", length(input), "\n")
 			if(length(input)>1) {
+				cat("many workers\n")
 				resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
 			} else {
-				resultList <- mpi.parLapply(input,runTALYS)
+				# just run it on the main thread
+				cat("single workers\n")
+				resultList <- runTALYS(input)
 			}
-			
+
 			theResults <<- resultList
 		} else {
 			stop("outSpec is neither a data.table nor a list of data.tables.")
