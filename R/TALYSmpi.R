@@ -120,14 +120,10 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 				list(input=inpSpecList[[i]], outspec=outSpec,saveDir=saveDir, calcIdx=i, calcDir="")
 				)
 
-			cat("length(input) = ", length(input), "\n")
 			if(length(input)>1) {
-				cat("many workers\n")
 				resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
 			} else {
 				# just run it on the main thread
-				cat("single workers\n")
-				#resultList <- mpi.parLapply(input,runTALYS)
 				resultList <- lapply(input,runTALYS)
 			}
 			
@@ -146,8 +142,6 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 				resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
 			} else {
 				# just run it on the main thread
-				cat("single workers\n")
-				#resultList <- mpi.parLapply(input,runTALYS)
 				resultList <- lapply(input,runTALYS)
 			}
 
