@@ -64,7 +64,7 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 		cnt <- 0
 		succ <- FALSE
 		while (!succ && (cnt<-cnt+1) < 100) {
-			proposedDirname <- sprintf("tmpcalc_%s", paste0(sample(letters,10),collapse=""))
+			proposedDirname <- sprintf("tmpcalc_%s_%d", paste0(sample(letters,10),collapse=""), input_object$calcIdx)
 			proposedPathname <- file.path(globalTempdir, proposedDirname)
 			#print(paste0("proposedPathname = ",proposedPathname,", cnt = ",cnt))
 			succ <- dir.create(proposedPathname, showWarnings = FALSE)
@@ -120,6 +120,8 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 				list(input=inpSpecList[[i]], outspec=outSpec,saveDir=saveDir, calcIdx=i, calcDir="")
 				)
 
+			cat("talysR: number of jobs to do: ", length(input), "\n")
+			cat("talysR: number of workers: ", maxNumCPU, "\n")
 			if(length(input)>1) {
 				resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
 			} else {
@@ -136,9 +138,9 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 				list(input=x, outspec=y, saveDir = saveDir, calcIdx=i, calcDir="")
 			}, i=seq_along(inpSpecList), x=inpSpecList, y=outSpec, SIMPLIFY = FALSE)
 
-			cat("length(input) = ", length(input), "\n")
+			cat("talysR: number of jobs to do: ", length(input), "\n")
+			cat("talysR: number of workers: ", maxNumCPU, "\n")
 			if(length(input)>1) {
-				cat("many workers\n")
 				resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
 			} else {
 				# just run it on the main thread
@@ -164,8 +166,12 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 	    }
 	}
 
-	isRunningTALYS <- function() {
-		FALSE
+	isRunningTALYS <- function(jobList, combine=TRUE) {
+		# dummy function to be compatible with georgs clusterTALYS, will always return FALSE
+		if (isTRUE(combine))
+			return(FALSE)
+		else
+			return(rep(FALSE,length(jobList)))
 	}
 
 	list(run=runTALYSparallel,result=getResults,isRunning=isRunningTALYS)
