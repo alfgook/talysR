@@ -43,7 +43,7 @@ void talys(char **directory)
       return;
    }
 
-   // run tha talys calculation
+   // run the talys calculation
    machine_();
    constants_();
    talysinput_();
@@ -51,7 +51,7 @@ void talys(char **directory)
    talysreaction_();
    if(input1l_.flagnatural) natural_();
 
-   // close the the output file
+   // close the output file
    fclose(stdout);
 
    // redirect the stdout to back to screen

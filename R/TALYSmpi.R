@@ -89,6 +89,24 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 
 		result$result <- talysMod$read(basedir, copy(input_object$outspec), packed=FALSE)
 
+		# clean up the calculation
+		if (!is.null(input_object$saveDir)) {
+			tarfile <- sprintf("calc.%04d.tar", input_object$calcIdx)
+			tarfile <- file.path(globalTempdir,tarfile)
+			saveFilePath <- file.path(input_object$saveDir, tarfile)
+			tarcmd <- paste0('tar -czf ', tarfile,' ',basedir,'/*')
+			movecmd <- paste0('mv ', tarfile, ' ', saveFilePath)
+
+			err_str <- ""
+			if (system(tarcmd, intern=FALSE) != 0)
+				err_str <- paste0(err_str," | Problem with: ", tarcmd)
+			if (system(movecmd, intern=FALSE) != 0)
+				err_str <- paste0(err_str," | Problem with: ", movecmd)
+
+			if(nchar(err_str))
+				result$error <- err_str
+		}
+
 		unlink(list.files(basedir))
 		unlink(basedir, recursive=TRUE)
 
