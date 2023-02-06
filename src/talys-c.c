@@ -54,7 +54,7 @@ void talys(char **directory)
    talysreaction_();
    if(input1l_.flagnatural) natural_();
 
-   // redirect the stdout to back to screen
+   // redirect the stdout back to screen
    FILE *fp = fdopen(old_stdout, "w");
 
    // close the output file
