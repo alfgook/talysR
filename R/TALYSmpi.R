@@ -92,21 +92,23 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 		# clean up the calculation
 		if (!is.null(input_object$saveDir)) {
 			tarfile <- sprintf("calc.%04d.tar", input_object$calcIdx)
-			saveFilePath <- file.path(input_object$saveDir)
+			saveFilePath <- file.path(input_object$saveDir,tarfile)
 			tarcmd <- paste0('tar -czf ', tarfile,' *')
 			movecmd <- paste0('mv ', tarfile, ' ', saveFilePath)
 
 			err_str <- ""
+			curdir <- getwd()
 			setwd(basedir)
 			if (system(tarcmd, intern=FALSE) != 0)
 				err_str <- paste0(err_str," | Problem with: ", tarcmd)
 			if (system(movecmd, intern=FALSE) != 0)
 				err_str <- paste0(err_str," | Problem with: ", movecmd)
+			setwd(curdir)
 
 			if(nchar(err_str))
 				result$error <- err_str
 		}
-
+		
 		unlink(list.files(basedir))
 		unlink(basedir, recursive=TRUE)
 
