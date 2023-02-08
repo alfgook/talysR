@@ -103,10 +103,10 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 				err_str <- paste0(err_str," | Problem with: ", tarcmd)
 			if (system(movecmd, intern=FALSE) != 0)
 				err_str <- paste0(err_str," | Problem with: ", movecmd)
-			setwd(curdir)
 
 			if(nchar(err_str))
 				result$error <- err_str
+			setwd(curdir)
 		}
 		
 		unlink(list.files(basedir))
