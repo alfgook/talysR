@@ -37,6 +37,9 @@ void talys(char **directory)
       return;
    }
 
+   // Preserve original file descriptor for stdout.
+   int old_stdout = dup(1);
+
    // redirect the stdout to file
    if(!freopen("output","a+",stdout)) {
       fprintf( stderr, "talys-c: couldn't open the output file\n");
@@ -51,15 +54,13 @@ void talys(char **directory)
    talysreaction_();
    if(input1l_.flagnatural) natural_();
 
+   // redirect the stdout to back to screen
+   FILE *fp = fdopen(old_stdout, "w");
+
    // close the output file
    fclose(stdout);
 
-   // redirect the stdout to back to screen
-   #ifdef __linux__ 
-   freopen("/dev/tty", "w", stdout); /*for gcc, ubuntu*/ 
-   #elif _WIN32
-   freopen("CON", "w", stdout); /*Mingw C++; Windows*/
-   #endif
+   stdout = fp;
 
    // change back into the original workdir
    if(chdir(cwd)) {
