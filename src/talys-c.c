@@ -38,10 +38,10 @@ void talys(char **directory)
    }
 
    // redirect the stdout to file
-   if(!freopen("output","a+",stdout)) {
+   /*if(!freopen("output","a+",stdout)) {
       fprintf( stderr, "talys-c: couldn't open the output file\n");
       return;
-   }
+   }*/
 
    // run the talys calculation
    machine_();
@@ -51,16 +51,17 @@ void talys(char **directory)
    talysreaction_();
    if(input1l_.flagnatural) natural_();
 
+/*
    // close the output file
    fclose(stdout);
 
    // redirect the stdout to back to screen
    #ifdef __linux__ 
-   freopen("/dev/tty", "w", stdout); /*for gcc, ubuntu*/ 
+   freopen("/dev/tty", "w", stdout); //for gcc, ubuntu 
    #elif _WIN32
-   freopen("CON", "w", stdout); /*Mingw C++; Windows*/
+   freopen("CON", "w", stdout); //Mingw C++; Windows
    #endif
-
+*/
    // change back into the original workdir
    if(chdir(cwd)) {
       fprintf( stderr, "talys-c: couldn't change back to original directory\n");
