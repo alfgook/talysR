@@ -9,6 +9,7 @@
 #'
 #' @import data.table
 #' @import Rmpi
+#' @import doMPI
 #' @import digest
 #' @import TALYSeval
 #' @useDynLib talysR
@@ -27,16 +28,19 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 		return(list(error=err))
 	}
 
-	if(!maxNumCPU) maxNumCPU <- mpi.universe.size() - 1
-
+	#if(!maxNumCPU) maxNumCPU <- mpi.universe.size() - 1
 	#mpi.spawn.Rslaves(nslaves=maxNumCPU) # This is to get log files for debugging
-	mpi.spawn.Rslaves(nslaves=maxNumCPU,quiet=quiet,needlog=needlog)
+	#mpi.spawn.Rslaves(nslaves=maxNumCPU,quiet=quiet,needlog=needlog)
+
+	cluster <- startMPIcluster()
+	registerDoMPI(cluster)
 
 	defaults <- list(runOpts=runOpts)
 	theResults <- NA
 
 	close <- function(env) {
-		mpi.close.Rslaves(dellog = FALSE)
+		closeCluster(cluster)
+		#mpi.close.Rslaves(dellog = FALSE)
 		mpi.finalize()
 	}
 	ee <- environment()
@@ -103,7 +107,8 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 
 		return(result)
 	}
-	mpi.bcast.Robj2slave(obj = runTALYS)
+	#mpi.bcast.Robj2slave(obj = runTALYS)
+	exportDoMPI(cluster,'runTALYS',envir=environment())
 
 	runTALYSparallel <- function(inpSpecList, outSpec, runOpts=NULL, saveDir=NULL, calcsPerJob) {
 		# the argument calcsPerJob is deprecated
@@ -130,14 +135,11 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 				)
 
 			cat("talysR: number of jobs to do: ", length(input), "\n")
-			cat("talysR: number of workers: ", maxNumCPU, "\n")
-			if(length(input)>1) {
-				#resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
-				resultList <- mpi.applyLB(input,runTALYS)
-			} else {
-				# just run it on the main thread
-				# resultList <- lapply(input,runTALYS)
-				resultList <- mpi.applyLB(input,runTALYS)
+			#cat("talysR: number of workers: ", maxNumCPU, "\n")
+
+			#resultList <- mpi.applyLB(input,runTALYS)
+			resultList <- foreach(inp=input) %dopar% {
+				runTALYS(inp)
 			}
 			
 			theResults <<- resultList
@@ -150,15 +152,12 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 			}, i=seq_along(inpSpecList), x=inpSpecList, y=outSpec, SIMPLIFY = FALSE)
 
 			cat("talysR: number of jobs to do: ", length(input), "\n")
-			cat("talysR: number of workers: ", maxNumCPU, "\n")
-			if(length(input)>1) {
-				#resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
-				resultList <- mpi.applyLB(input,runTALYS)
-			} else {
-				# just run it on the main thread
-				# resultList <- lapply(input,runTALYS)
-				resultList <- mpi.applyLB(input,runTALYS)
+			#cat("talysR: number of workers: ", maxNumCPU, "\n")
+			#resultList <- mpi.applyLB(input,runTALYS)
+			resultList <- foreach(inp=input) %dopar% {
+				runTALYS(inp)
 			}
+
 
 			theResults <<- resultList
 		} else {
