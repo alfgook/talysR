@@ -76,17 +76,6 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 
 		.C("talys",directory=basedir)
 
-		# save talys output summary: will skip this, just takes time
-        # numLines <- as.integer(system(paste0("wc -l ",basedir,"/output | awk '{print $1}'"), intern=TRUE))
-        # if (numLines <= 60)
-        #   outputSummary <- system(paste0("cat ",basedir,"/output"), intern=TRUE)
-        # else
-        # {
-        #   cmdstr <- paste0("head -n 15 ",basedir,"/output; echo --- LINES SKIPPED ---; tail -n 15 ",basedir,"/output")
-        #   outputSummary <- system(cmdstr, intern=TRUE)
-        # }
-        # result$output <- outputSummary
-
 		result$result <- talysMod$read(basedir, copy(input_object$outspec), packed=FALSE)
 
 		# clean up the calculation
@@ -143,10 +132,12 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 			cat("talysR: number of jobs to do: ", length(input), "\n")
 			cat("talysR: number of workers: ", maxNumCPU, "\n")
 			if(length(input)>1) {
-				resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
+				#resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
+				resultList <- mpi.applyLB(input,runTALYS)
 			} else {
 				# just run it on the main thread
-				resultList <- lapply(input,runTALYS)
+				# resultList <- lapply(input,runTALYS)
+				resultList <- mpi.applyLB(input,runTALYS)
 			}
 			
 			theResults <<- resultList
@@ -161,10 +152,12 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 			cat("talysR: number of jobs to do: ", length(input), "\n")
 			cat("talysR: number of workers: ", maxNumCPU, "\n")
 			if(length(input)>1) {
-				resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
+				#resultList <- mpi.parLapply(input,runTALYS,job.num=length(input))
+				resultList <- mpi.applyLB(input,runTALYS)
 			} else {
 				# just run it on the main thread
-				resultList <- lapply(input,runTALYS)
+				# resultList <- lapply(input,runTALYS)
+				resultList <- mpi.applyLB(input,runTALYS)
 			}
 
 			theResults <<- resultList
