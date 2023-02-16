@@ -40,3 +40,20 @@ you may want to place the above line in your logon script, ~/.bashrc.
 
 ## Basic usage
 
+## Information about talys
+
+the source code in src/ is that of talys1.96
+
+with a few minor modifications:
+
+1) the main file talys.f is removed and replaced by a C-wrapper talys-c.c the wrapper runs talys in the exact same way that the normal talys.f does, but redirects the stdout to a file named output created in the working directory. This is necessary for running talys as a 'subroutine' (or function) from R. It also facilitates the parallelization of talys runs via mpi.
+
+2) the file readinput.f has been modified so that the input is read from a file 'input' in the current working directory, instead of stdin. This modification is necessary for running talys as a 'subroutine' (or function) from R. It also facilitates the parallelization of talys runs.
+
+3) the file machine.f is modified so that the input structure data path is not hardcoded, and must be set at compile time. Instead the talys home path is set by the environment variable TALYSHOME. The user must set this environment variable, for example
+
+	export TALYSHOME=/home/user/talys
+
+the code will look for structure data in $TALYSHOME/structure/
+
+the structure data base should be that of talys version 1.96 the code will some checks, that the data is not from an older version of talys. If it cannot find $TALYSHOME/abundance/H.abun it will write an error message in the output file and stop
