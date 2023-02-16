@@ -7,11 +7,7 @@
 #' @param quiet (optional) passed on to Rmpi::mpi.spawn.Rslaves. If TRUE, do not print anything unless an error occurs
 #' @export
 #'
-#' @import data.table
-#' @import Rmpi
-#' @import doMPI
-#' @import digest
-#' @import TALYSeval
+#' @import data.table Rmpi doMPI digest TALYSeval foreach
 #' @useDynLib talysR
 
 initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
@@ -27,10 +23,6 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 		print(err)
 		return(list(error=err))
 	}
-
-	#if(!maxNumCPU) maxNumCPU <- mpi.universe.size() - 1
-	#mpi.spawn.Rslaves(nslaves=maxNumCPU) # This is to get log files for debugging
-	#mpi.spawn.Rslaves(nslaves=maxNumCPU,quiet=quiet,needlog=needlog)
 
 	cluster <- startMPIcluster()
 	registerDoMPI(cluster)
@@ -107,7 +99,6 @@ initTALYSmpi <- function(runOpts=NULL, maxNumCPU=0, needlog=FALSE, quiet=TRUE) {
 
 		return(result)
 	}
-	#mpi.bcast.Robj2slave(obj = runTALYS)
 	exportDoMPI(cluster,'runTALYS',envir=environment())
 
 	runTALYSparallel <- function(inpSpecList, outSpec, runOpts=NULL, saveDir=NULL, calcsPerJob) {

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <unistd.h> 
 #include <limits.h>
+#include <fcntl.h>
 
 extern void machine_();
 extern void constants_();
@@ -37,6 +38,18 @@ void talys(char **directory)
       return;
    }
 
+   // copy the stdout filedescriptor
+   int out = dup(STDOUT_FILENO);
+
+   // close stdout
+   close(STDOUT_FILENO);
+
+   // open a file where talys can write its stdout
+   int log = open("output", O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+   if(log != STDOUT_FILENO) {
+      fprintf(stderr, "could not create talys output file");
+   }
+
    // run the talys calculation
    machine_();
    constants_();
@@ -44,6 +57,11 @@ void talys(char **directory)
    talysinitial_();
    talysreaction_();
    if(input1l_.flagnatural) natural_();
+
+   //flush stdout to make sure nothing is left in the buffer
+   fflush(stdout);
+   // get back stdout
+   dup2(out, STDOUT_FILENO);
 
    // change back into the original workdir
    if(chdir(cwd)) {
