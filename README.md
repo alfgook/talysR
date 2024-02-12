@@ -42,7 +42,7 @@ you may want to place the above line in your logon script, ~/.bashrc.
 
 ## Information about talys
 
-the source code in src/ is that of talys1.96
+the source code in src/ is that of talys1.95
 
 with a few minor modifications:
 
